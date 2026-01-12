@@ -12,7 +12,7 @@ import io.cucumber.testng.CucumberOptions;
 //                "json:target/cucumber.json"
 
         },
-//        tags = "Login_success",
+      tags = "@checkout",
         monochrome = true
 )
 

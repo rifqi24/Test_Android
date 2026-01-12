@@ -44,7 +44,7 @@ public class LoginPage {
         );
     }
 
-    private WebElement username() {
+    WebElement username() {
         return wait.until(
                 ExpectedConditions.elementToBeClickable(
                         AppiumBy.id("com.saucelabs.mydemoapp.android:id/username1TV")
@@ -65,7 +65,7 @@ public class LoginPage {
     }
 
 
-    private WebElement loginButton() {
+    WebElement loginButton() {
         return wait.until(
                 ExpectedConditions.elementToBeClickable(
                         AppiumBy.id("com.saucelabs.mydemoapp.android:id/loginBtn")

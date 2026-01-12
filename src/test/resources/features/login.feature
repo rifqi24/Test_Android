@@ -1,4 +1,4 @@
-@Login
+
 Feature: Login
 
   @Login @Login_success
@@ -12,3 +12,6 @@ Feature: Login
     Given user berada di halaman login
     When user login dengan username locked out dan password secret_sauce
     Then user mendapatkan error locked out
+
+
+
