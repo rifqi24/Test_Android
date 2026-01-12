@@ -22,10 +22,13 @@ public class CheckoutLocators {
             AppiumBy.id("com.saucelabs.mydemoapp.android:id/priceTV");
 
     public static final By TOTAL_PRICE =
-            AppiumBy.id("com.saucelabs.mydemoapp.android:id/totalPriceTV");
+            AppiumBy.id("com.saucelabs.mydemoapp.android:id/totalAmountTV");
+
+    public static final By SHIPPING_PRICE =
+            AppiumBy.id("com.saucelabs.mydemoapp.android:id/amountTV");
 
     public static final By QTY =
-            AppiumBy.id("com.saucelabs.mydemoapp.android:id/noTV");
+            AppiumBy.id("com.saucelabs.mydemoapp.android:id/itemNumberTV");
 
     public static final By CHECKOUT_CONFIRM =
             AppiumBy.accessibilityId("Confirms products for checkout");
@@ -64,7 +67,7 @@ public class CheckoutLocators {
             AppiumBy.id("com.saucelabs.mydemoapp.android:id/expirationDateET");
     public static final By CVV =
             AppiumBy.id("com.saucelabs.mydemoapp.android:id/securityCodeET");
-    public static final By VERIFY_ADDRESS =
+    public static final By VALIDATION_ADDRESS =
             AppiumBy.id("com.saucelabs.mydemoapp.android:id/address1ErrorTV");
 
     // COMPLETE

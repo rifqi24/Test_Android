@@ -4,16 +4,19 @@ import hooks.Hooks;
 import pages.CheckoutPage;
 import io.cucumber.java.en.*;
 import static org.testng.Assert.assertTrue;
+import pages.LoginPage;
 
 public class CheckoutSteps {
 
     CheckoutPage checkoutPage;
+    LoginPage loginPage ;
 
 //    BERHASIL CHECKOUT
 
     @Given("user sudah login")
     public void user_sudah_login() {
         checkoutPage = new CheckoutPage(Hooks.driver);
+
     }
 
     @When("user melakukan checkout end to end")
@@ -25,10 +28,17 @@ public class CheckoutSteps {
         checkoutPage.loginIfNeeded();
         checkoutPage.fillShipping();
         checkoutPage.fillPayment();
-//        assertTrue(
-//                checkoutPage.isTotalPriceCorrect(),
-//                "Total price tidak sesuai dengan price x quantity"
-//        );
+    }
+
+    @When("user melakukan checkout product")
+    public void user_checkout_product() {
+        checkoutPage.selectProduct();
+        checkoutPage.addProductToCart();
+        checkoutPage.openCart();
+        checkoutPage.proceedCheckout();
+        checkoutPage.loginIfNeeded();
+        checkoutPage.fillShipping();
+        checkoutPage.fillPaymentAmount();
     }
 
     @Then ("checkout berhasil")
@@ -55,6 +65,16 @@ public class CheckoutSteps {
 
     @Then ("Proses checkout Gagal")
     public void checkout_gagal() {
-        assertTrue(checkoutPage.verifyPaymentaddress());
+        assertTrue(checkoutPage.validationPaymentaddress());
+//        loginPage.backtocatalog();
+    }
+
+    @Then("checkout product berhasil")
+    public void checkout_product_berhasil() {
+        assertTrue(
+                checkoutPage.isTotalPriceCorrect(),
+                "Total price tidak sesuai, checkout dibatalkan"
+        );
+
     }
 }

@@ -18,12 +18,15 @@ public class BasePages {
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
-    public void scrollTo(String resourceId) {
-        driver.findElement(AppiumBy.androidUIAutomator(
-                "new UiScrollable(new UiSelector().scrollable(true))" +
-                        ".scrollIntoView(new UiSelector().resourceId(\"" + resourceId + "\"))"
-        ));
+    private void scrollToText(String text) {
+        driver.findElement(
+                AppiumBy.androidUIAutomator(
+                        "new UiScrollable(new UiSelector().scrollable(true))"
+                                + ".scrollIntoView(new UiSelector().textContains(\"" + text + "\"))"
+                )
+        );
     }
+
 
 
     protected void waitVisible(By locator) {

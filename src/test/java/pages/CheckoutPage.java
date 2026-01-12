@@ -1,5 +1,6 @@
 package pages;
 
+import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -66,16 +67,28 @@ public class CheckoutPage  {
 
         wait.until(ExpectedConditions.elementToBeClickable(CheckoutLocators.PAYMENT_BTN)).click();
     }
+
+    public void fillPaymentAmount() {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+                CheckoutLocators.CARD_NAME)).sendKeys("QA Tester");
+        driver.findElement(CheckoutLocators.CARD_NUMBER).sendKeys("4111111111111111");
+        driver.findElement(CheckoutLocators.EXP_DATE).sendKeys("1225");
+        driver.findElement(CheckoutLocators.CVV).sendKeys("123");
+        driver.findElement(CheckoutLocators.PAYMENT_BTN).click();
+
+//        wait.until(ExpectedConditions.elementToBeClickable(CheckoutLocators.PAYMENT_BTN)).click();
+    }
+
     public void clickPayment() {
 
         wait.until(ExpectedConditions.elementToBeClickable(CheckoutLocators.PAYMENT_BTN)).click();
 
     }
-    public boolean verifyPaymentaddress() {
+    public boolean validationPaymentaddress() {
 
         try {
             // Tunggu sampai error muncul
-            return wait.until(ExpectedConditions.visibilityOfElementLocated(CheckoutLocators.VERIFY_ADDRESS))
+            return wait.until(ExpectedConditions.visibilityOfElementLocated(CheckoutLocators.VALIDATION_ADDRESS))
                     .isDisplayed();
         } catch (TimeoutException e) {
             return false;
@@ -101,36 +114,85 @@ public class CheckoutPage  {
         return completeVisible && continueVisible;
     }
 
-    public boolean isTotalPriceCorrect() {
-
-        String priceText = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(
-                        CheckoutLocators.PRICE
+    private void scrollToText(String text) {
+        driver.findElement(
+                AppiumBy.androidUIAutomator(
+                        "new UiScrollable(new UiSelector().scrollable(true))"
+                                + ".scrollIntoView(new UiSelector().textContains(\"" + text + "\"))"
                 )
-        ).getText();
+        );
+    }
 
-        String totalText = driver.findElement(
-                CheckoutLocators.TOTAL_PRICE
-        ).getText();
+    private double parseDollar(String priceText) {
+        return Double.parseDouble(
+                priceText.replace("$", "").trim()
+        );
+    }
 
-        String qtyText = driver.findElement(
-                CheckoutLocators.QTY
-        ).getText();
+    public boolean isTotalPriceCorrect() {
+        try {
+            // Ambil harga dan qty (biasanya selalu visible)
+            String priceText = wait.until(
+                    ExpectedConditions.visibilityOfElementLocated(CheckoutLocators.PRICE)
+            ).getText();
 
-        // Contoh text:
-        // priceText = "$15.99"
-        // totalText = "$31.98"
-        // qtyText = "2"
+            String qtyText = wait.until(
+                    ExpectedConditions.visibilityOfElementLocated(CheckoutLocators.QTY)
+            ).getText();
 
-        double price = Double.parseDouble(priceText.replace("$", ""));
-        double totalPrice = Double.parseDouble(totalText.replace("$", ""));
-        int qty = Integer.parseInt(qtyText);
 
-        double expectedTotal = price * qty;
+            scrollToText("DHL Standard Delivery");
 
-        // rounding biar aman dari decimal issue
-        return Math.round(expectedTotal * 100.0) / 100.0 ==
-                Math.round(totalPrice * 100.0) / 100.0;
+            String shippingText = wait.until(
+                    ExpectedConditions.visibilityOfElementLocated(CheckoutLocators.SHIPPING_PRICE)
+            ).getText();
+
+            String totalText = wait.until(
+                    ExpectedConditions.visibilityOfElementLocated(CheckoutLocators.TOTAL_PRICE)
+            ).getText();
+
+            // Parse text menjadi angka
+            double price = parseDollar(priceText);
+            int qty = Integer.parseInt(qtyText.replaceAll("\\D+", ""));
+            double shipping = parseDollar(shippingText);
+            double totalUI = parseDollar(totalText);
+
+            double expectedTotal = (price * qty) + shipping;
+
+
+            boolean isTotalCorrect = Math.abs(expectedTotal - totalUI) < 0.01;
+
+            // 🔍 DEBUG LOG
+            System.out.println("PRICE     : " + price);
+            System.out.println("QTY       : " + qty);
+            System.out.println("SHIPPING  : " + shipping);
+            System.out.println("EXPECTED  : " + expectedTotal);
+            System.out.println("UI TOTAL  : " + totalUI);
+
+
+            if (isTotalCorrect) {
+                wait.until(
+                        ExpectedConditions.elementToBeClickable(
+                                CheckoutLocators.PAYMENT_BTN
+                        )
+                ).click();
+            }
+            boolean continueVisible = wait.until(
+                    ExpectedConditions.visibilityOfElementLocated(
+                            CheckoutLocators.CONTINUE_SHOPPING
+                    )
+            ).isDisplayed();
+
+            if (continueVisible) {
+                driver.findElement(CheckoutLocators.CONTINUE_SHOPPING).click();
+            }
+            return isTotalCorrect;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
     }
 
 }
