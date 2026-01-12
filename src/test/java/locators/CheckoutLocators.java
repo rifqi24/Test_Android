@@ -64,6 +64,8 @@ public class CheckoutLocators {
             AppiumBy.id("com.saucelabs.mydemoapp.android:id/expirationDateET");
     public static final By CVV =
             AppiumBy.id("com.saucelabs.mydemoapp.android:id/securityCodeET");
+    public static final By VERIFY_ADDRESS =
+            AppiumBy.id("com.saucelabs.mydemoapp.android:id/address1ErrorTV");
 
     // COMPLETE
     public static final By COMPLETE_TEXT =

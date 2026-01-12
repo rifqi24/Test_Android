@@ -1,6 +1,7 @@
 package pages;
 
 import io.appium.java_client.android.AndroidDriver;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import locators.CheckoutLocators;
@@ -64,6 +65,21 @@ public class CheckoutPage  {
         driver.findElement(CheckoutLocators.PAYMENT_BTN).click();
 
         wait.until(ExpectedConditions.elementToBeClickable(CheckoutLocators.PAYMENT_BTN)).click();
+    }
+    public void clickPayment() {
+
+        wait.until(ExpectedConditions.elementToBeClickable(CheckoutLocators.PAYMENT_BTN)).click();
+
+    }
+    public boolean verifyPaymentaddress() {
+
+        try {
+            // Tunggu sampai error muncul
+            return wait.until(ExpectedConditions.visibilityOfElementLocated(CheckoutLocators.VERIFY_ADDRESS))
+                    .isDisplayed();
+        } catch (TimeoutException e) {
+            return false;
+        }
     }
 
     public boolean isCheckoutComplete() {
